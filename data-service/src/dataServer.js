@@ -32,13 +32,12 @@ function calcStats(data) {
         const values = data.map(row => cleanNumber(row[name]))
         const mean = Math.round(values.reduce((a, b) => a + b, 0) / values.length * 10) / 10
         const peak = Math.max(...values)
-        const half = Math.floor(values.length / 2)
-        const firstHalf = Math.round(values.slice(0, half).reduce((a, b) => a + b, 0) / half)
-        const secondHalf = Math.round(values.slice(half).reduce((a, b) => a + b, 0) / half)
-        const trend = secondHalf > firstHalf + 5 ? 'increasing' : secondHalf < firstHalf - 5 ? 'decreasing' : 'stable'
+        const first = values[0]
+        const last = values[values.length - 1]
+        const trend = last > first ? 'increasing' : last < first ? 'decreasing' : 'stable'
         const total = values.reduce((a, b) => a + b, 0)
 
-        return { name, mean, peak, trend, firstHalf, secondHalf, total, values }
+        return { name, mean, peak, trend, total, values }
     })
 }
 
