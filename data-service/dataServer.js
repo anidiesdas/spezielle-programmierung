@@ -11,7 +11,7 @@ app.use(express.json())
 const TERMS = ['whey_protein', 'vitamin_d', 'omega_3', 'kreatin', 'kollagen']
 
 function loadCSV(filename) {
-    const filePath = path.join(__dirname, '../data', filename)
+    const filePath = path.join(__dirname, 'data', filename)
     const content = fs.readFileSync(filePath, 'utf-8')
     return parse(content, { columns: true, skip_empty_lines: true, trim: true })
 }

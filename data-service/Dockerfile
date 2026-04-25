@@ -5,7 +5,7 @@ WORKDIR /app
 COPY data-service/package*.json ./
 RUN npm install
 
-COPY data-service/src ./src
+COPY data-service/dataServer.js ./
 COPY data-service/data ./data
 
 RUN addgroup -S appgroup && adduser -S appuser -G appgroup
