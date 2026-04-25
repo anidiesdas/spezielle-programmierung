@@ -2,15 +2,14 @@ FROM node:22-alpine
 
 WORKDIR /app
 
-COPY data-service/package*.json ./
+COPY ai-service/package*.json ./
 RUN npm install
 
-COPY data-service/src ./src
-COPY data-service/data ./data
+COPY ai-service/server.js ./
 
 RUN addgroup -S appgroup && adduser -S appuser -G appgroup
 USER appuser
 
-EXPOSE 3001
+EXPOSE 8001
 
 CMD ["npm", "start"]

@@ -4,7 +4,7 @@ const cors = require("cors");
 const app = express();
 app.use(cors());
 
-const DATA_SERVICE_URL = "http://localhost:3001/metrics";
+const DATA_SERVICE_URL = "http://data-service:3001/metrics";
 
 app.get("/analysis", async (req, res) => {
     try {
