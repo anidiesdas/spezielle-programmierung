@@ -1,8 +1,27 @@
-import { createRouter, createWebHistory } from 'vue-router'
+import { createRouter, createWebHistory } from "vue-router";
+import DashboardPage from "../pages/DashboardPage.vue";
+import ChatPage from "../pages/ChatPage.vue";
+
+const routes = [
+    {
+        path: "/",
+        redirect: "/dashboard",
+    },
+    {
+        path: "/dashboard",
+        name: "dashboard",
+        component: DashboardPage,
+    },
+    {
+        path: "/chat",
+        name: "chat",
+        component: ChatPage,
+    },
+];
 
 const router = createRouter({
-  history: createWebHistory(import.meta.env.BASE_URL),
-  routes: [],
-})
+    history: createWebHistory(),
+    routes,
+});
 
-export default router
+export default router;
