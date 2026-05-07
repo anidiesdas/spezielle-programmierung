@@ -2,7 +2,6 @@
   <section class="bottom-card">
     <div class="card-title">
       <h3>Durchschnittliches Suchinteresse (Ranking)</h3>
-      <span>ⓘ</span>
     </div>
 
     <div
