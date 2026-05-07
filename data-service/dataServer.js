@@ -8,7 +8,13 @@ const app = express()
 app.use(cors())
 app.use(express.json())
 
-const TERMS = ['whey_protein', 'vitamin_d', 'omega_3', 'kreatin', 'kollagen']
+const TERMS = [
+    { key: 'whey_protein', file: 'wheyprotein', label: 'Whey Protein' },
+    { key: 'vitamin_d',    file: 'vitamind',    label: 'Vitamin D' },
+    { key: 'omega_3',      file: 'omega3',      label: 'Omega 3' },
+    { key: 'kreatin',      file: 'kreatin',     label: 'Kreatin' },
+    { key: 'kollagen',     file: 'kollagen',    label: 'Kollagen' },
+]
 
 function loadCSV(filename) {
     const filePath = path.join(__dirname, 'data', filename)
@@ -41,7 +47,7 @@ function calcStats(data) {
     })
 }
 
-// Aufgabe 3 – /metrics
+// /metrics
 app.get('/metrics', (req, res) => {
     try {
         const data = loadCSV('interest_over_time.csv')
@@ -52,12 +58,12 @@ app.get('/metrics', (req, res) => {
     }
 })
 
-// Aufgabe 5 – /health
+// /health
 app.get('/health', (req, res) => {
     res.json({ status: 'ok' })
 })
 
-// Ranking
+// /ranking
 app.get('/ranking', (req, res) => {
     try {
         const data = loadCSV('interest_over_time.csv')
@@ -71,20 +77,20 @@ app.get('/ranking', (req, res) => {
     }
 })
 
-// Top Queries
+// /top-queries
 app.get('/top-queries', (req, res) => {
     try {
         const result = {}
         TERMS.forEach(term => {
             try {
-                const raw = loadCSV(`top_queries_${term}.csv`)
-                result[term] = raw.map(row => ({
+                const raw = loadCSV(`top_queries_${term.file}.csv`)
+                result[term.key] = raw.map(row => ({
                     query: row['query'] || '',
                     searchInterest: cleanNumber(row['search interest']),
                     increasePercent: String(row['increase percent'] || '').replace(/\u00a0/g, '').trim()
                 }))
             } catch {
-                result[term] = []
+                result[term.key] = []
             }
         })
         res.json({ data: result })
@@ -93,20 +99,20 @@ app.get('/top-queries', (req, res) => {
     }
 })
 
-// Rising Queries
+// /rising-queries
 app.get('/rising-queries', (req, res) => {
     try {
         const result = {}
         TERMS.forEach(term => {
             try {
-                const raw = loadCSV(`rising_queries_${term}.csv`)
-                result[term] = raw.map(row => ({
+                const raw = loadCSV(`rising_queries_${term.file}.csv`)
+                result[term.key] = raw.map(row => ({
                     query: row['query'] || '',
                     searchInterest: cleanNumber(row['search interest']),
                     increasePercent: String(row['increase percent'] || '').replace(/\u00a0/g, '').trim()
                 }))
             } catch {
-                result[term] = []
+                result[term.key] = []
             }
         })
         res.json({ data: result })
