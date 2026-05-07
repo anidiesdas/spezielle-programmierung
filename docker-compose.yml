@@ -16,3 +16,13 @@ services:
       - OPENAI_API_KEY=${OPENAI_API_KEY}
     depends_on:
       - data-service
+
+  frontend:
+    build:
+      context: .
+      dockerfile: frontend/Dockerfile
+    ports:
+      - "5173:80"
+    depends_on:
+      - data-service
+      - ai-service
