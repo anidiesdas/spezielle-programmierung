@@ -6,15 +6,10 @@
         <h1>Google Trends Analyse</h1>
         <p>Supplements in Deutschland – {{ periodLabel }}</p>
       </div>
-      <div class="period-select">
-        <span>Zeitraum wählen</span>
-        <select v-model="selectedPeriod">
-          <option value="1">Letzter 1 Tag</option>
-          <option value="5">Letzte 5 Tage</option>
-          <option value="15">Letzte 15 Tage</option>
-          <option value="30">Letzte 30 Tage</option>
-        </select>
-      </div>
+      <DateRangePicker
+          :available-dates="allDatesRaw"
+          @update:range="onRangeUpdate"
+      />
     </header>
 
     <div v-if="loading" class="loading">Daten werden geladen...</div>
@@ -111,29 +106,31 @@
 </template>
 
 <script setup>
-import { computed, ref, onMounted } from "vue"
-import { marked } from "marked"
-import { getMetrics, getTopQueries, getRisingQueries, getAiAnalysis } from "../services/api.js"
+import {computed, ref, onMounted} from "vue"
+import {marked} from "marked"
+import {getMetrics, getTopQueries, getRisingQueries, getAiAnalysis} from "../services/api.js"
 
 import MetricCard from "../components/MetricCard.vue"
 import LineChart from "@/components/LineChart.vue"
 import DonutChart from "@/components/DonutChart.vue"
 import QueryTable from "@/components/QueryTable.vue"
 import RankingChart from "@/components/RankingChart.vue"
+import DateRangePicker from "@/components/DateRangePicker.vue"
 
 const TERM_COLORS = {
-  "Vitamin D":    { color: "#1557ff", bg: "#eef4ff" },
-  "Omega 3":      { color: "#43a047", bg: "#edf8ee" },
-  "Kreatin":      { color: "#ec2f8c", bg: "#ffe8f3" },
-  "Kollagen":     { color: "#e10436", bg: "rgba(165,9,44,0.06)" },
-  "Whey Protein": { color: "#8328a7", bg: "rgba(131,40,167,0.04)" },
+  "Vitamin D": {color: "#1557ff", bg: "#eef4ff"},
+  "Omega 3": {color: "#43a047", bg: "#edf8ee"},
+  "Kreatin": {color: "#ec2f8c", bg: "#ffe8f3"},
+  "Kollagen": {color: "#e10436", bg: "rgba(165,9,44,0.06)"},
+  "Whey Protein": {color: "#8328a7", bg: "rgba(131,40,167,0.04)"},
 }
 
 const loading = ref(true)
-const selectedPeriod = ref("30")
+const selectedRange = ref(null)
 const selectedTopQueryTerm = ref("Vitamin D")
 const selectedRisingQueryTerm = ref("Kreatin")
 const allDateLabels = ref([])
+const allDatesRaw = ref([])
 const terms = ref([])
 const queryRows = ref({})
 const risingRows = ref({})
@@ -156,15 +153,14 @@ onMounted(async () => {
       values: term.values
     }))
 
-    const count = terms.value[0]?.values?.length || 30
-    const labels = []
-    const today = new Date()
-    for (let i = count - 1; i >= 0; i--) {
-      const d = new Date(today)
-      d.setDate(today.getDate() - i)
-      labels.push(`${String(d.getDate()).padStart(2, '0')}.${String(d.getMonth() + 1).padStart(2, '0')}`)
-    }
-    allDateLabels.value = labels
+    // Rohdaten für Range-Filter
+    allDatesRaw.value = metricsData.dates
+
+    // Labels für Anzeige und DateRangePicker
+    allDateLabels.value = metricsData.dates.map(d => {
+      const [, month, day] = d.split('-')
+      return `${day}.${month}`
+    })
 
     const topData = await getTopQueries()
     Object.keys(topData.data).forEach(termKey => {
@@ -196,26 +192,47 @@ onMounted(async () => {
   }
 })
 
+function onRangeUpdate(range) {
+  selectedRange.value = range
+}
+
 const periodLabel = computed(() => {
-  if (selectedPeriod.value === "1") return "Letzter 1 Tag"
-  return `Letzte ${selectedPeriod.value} Tage`
+  if (selectedRange.value) {
+    const [, sm, sd] = selectedRange.value.start.split('-')
+    const [, em, ed] = selectedRange.value.end.split('-')
+    return `${sd}.${sm} – ${ed}.${em}`
+  }
+  return 'Letzter Monat'
+})
+
+// Index-basierter Filter anhand des gewählten Datumsbereichs
+const filteredIndices = computed(() => {
+  if (!selectedRange.value) {
+    return {start: 0, end: allDatesRaw.value.length - 1}
+  }
+  const startIdx = allDatesRaw.value.findIndex(d => d >= selectedRange.value.start)
+  const endIdx = allDatesRaw.value.findLastIndex(d => d <= selectedRange.value.end)
+  return {
+    start: startIdx === -1 ? 0 : startIdx,
+    end: endIdx === -1 ? allDatesRaw.value.length - 1 : endIdx
+  }
 })
 
 const filteredTerms = computed(() => {
-  const days = Number(selectedPeriod.value)
+  const {start, end} = filteredIndices.value
   return terms.value
       .filter(term => term.active)
       .map(term => {
-        const filteredValues = term.values.slice(-days)
+        const filteredValues = term.values.slice(start, end + 1)
         const average = filteredValues.reduce((sum, v) => sum + v, 0) / filteredValues.length
         const peak = Math.max(...filteredValues.map(Number))
-        return { ...term, values: filteredValues, average: Number(average.toFixed(1)), peak }
+        return {...term, values: filteredValues, average: Number(average.toFixed(1)), peak}
       })
 })
 
 const filteredLabels = computed(() => {
-  const days = Number(selectedPeriod.value)
-  return allDateLabels.value.slice(-days)
+  const {start, end} = filteredIndices.value
+  return allDateLabels.value.slice(start, end + 1)
 })
 
 const activeTerms = computed(() => filteredTerms.value)

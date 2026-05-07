@@ -52,7 +52,8 @@ app.get('/metrics', (req, res) => {
     try {
         const data = loadCSV('interest_over_time.csv')
         const terms = calcStats(data)
-        res.json({ terms })
+        const dates = data.map(row => row['Time'] || row['time'] || row['Datum'] || '').filter(Boolean)
+        res.json({ terms, dates })
     } catch (err) {
         res.status(500).json({ error: err.message })
     }
@@ -61,20 +62,6 @@ app.get('/metrics', (req, res) => {
 // /health
 app.get('/health', (req, res) => {
     res.json({ status: 'ok' })
-})
-
-// /ranking
-app.get('/ranking', (req, res) => {
-    try {
-        const data = loadCSV('interest_over_time.csv')
-        const terms = calcStats(data)
-        const ranking = terms
-            .map(s => ({ name: s.name, total: s.total, mean: s.mean }))
-            .sort((a, b) => b.total - a.total)
-        res.json({ ranking })
-    } catch (err) {
-        res.status(500).json({ error: err.message })
-    }
 })
 
 // /top-queries
@@ -88,7 +75,7 @@ app.get('/top-queries', (req, res) => {
                     query: row['query'] || '',
                     searchInterest: cleanNumber(row['search interest']),
                     increasePercent: String(row['increase percent'] || '').replace(/\u00a0/g, '').trim()
-                }))
+                })).slice(0, 20)
             } catch {
                 result[term.key] = []
             }
@@ -110,7 +97,7 @@ app.get('/rising-queries', (req, res) => {
                     query: row['query'] || '',
                     searchInterest: cleanNumber(row['search interest']),
                     increasePercent: String(row['increase percent'] || '').replace(/\u00a0/g, '').trim()
-                }))
+                })).slice(0, 20)
             } catch {
                 result[term.key] = []
             }
