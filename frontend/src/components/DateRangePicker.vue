@@ -107,6 +107,11 @@ const displayLabel = computed(() => {
   if (startDate.value && endDate.value) {
     return `${formatDisplay(startDate.value)} – ${formatDisplay(endDate.value)}`
   }
+  if (props.availableDates.length > 0) {
+    const first = props.availableDates[0]
+    const last = props.availableDates[props.availableDates.length - 1]
+    return `${formatDisplay(first)} – ${formatDisplay(last)}`
+  }
   return 'Zeitraum wählen'
 })
 
