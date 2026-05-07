@@ -80,7 +80,7 @@
 </template>
 
 <script setup>
-import { computed, ref, reactive } from "vue"
+import { computed, reactive } from "vue"
 
 const props = defineProps({
   terms: { type: Array, required: true },
@@ -176,3 +176,6 @@ const visibleLabels = computed(() => {
       .filter((_, i) => i % 7 === 0)
 })
 </script>
+
+<!-- TODO add grid
+gitter als hintergrundeffekt für bessere lesbarkeit -->

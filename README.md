@@ -23,3 +23,10 @@
 
 ### 7. Zukunftsvision – Wie könnte Ihr System weiterentwickelt werden?  
   Welche zusätzlichen Daten, Features oder AI-Methoden könnten integriert werden?
+
+[//]: # (TODO readme beenden)
+[//]: # (TODO kubernetes aufgaben)
+
+[//]: # (TODO offene Fragen
+- responsive design??
+- )

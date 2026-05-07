@@ -4,3 +4,6 @@
     <p>Chat-Seite funktioniert.</p>
   </main>
 </template>
+
+<!-- TODO chat bot
+Chat bot muss implementiert werden -->

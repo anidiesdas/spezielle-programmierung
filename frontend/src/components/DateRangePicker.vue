@@ -316,37 +316,6 @@ function reset() {
   cursor: default;
 }
 
-.drp-empty {
-  visibility: hidden;
-}
-
-.drp-unavailable {
-  color: #d0d5dd;
-  cursor: not-allowed;
-}
-
-.drp-available {
-  color: #344054;
-  cursor: pointer;
-}
-
-.drp-available:hover {
-  background: #eef4ff;
-  color: #1557ff;
-}
-
-.drp-start, .drp-end {
-  background: #1557ff !important;
-  color: #ffffff !important;
-  border-radius: 6px;
-}
-
-.drp-in-range {
-  background: #eef4ff;
-  color: #1557ff;
-  border-radius: 0;
-}
-
 .drp-footer {
   display: flex;
   align-items: center;

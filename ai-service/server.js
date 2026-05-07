@@ -52,3 +52,5 @@ app.get('/health', (req, res) => {
 })
 
 app.listen(8001, () => console.log('AI Service läuft auf Port 8001'))
+
+// TODO chat bot api

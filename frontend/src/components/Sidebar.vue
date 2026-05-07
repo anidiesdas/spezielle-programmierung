@@ -1,7 +1,7 @@
 <template>
   <aside class="sidebar">
     <div class="logo">
-      <div class="logo-icon">📈</div>
+      <div class="logo-icon">💊</div>
       <div>
         <strong>Supplement</strong>
         <span>Trends</span>
@@ -10,7 +10,7 @@
 
     <nav class="nav">
       <RouterLink to="/dashboard" class="nav-link">
-        <span>▣</span>
+        <span>📈</span>
         Dashboard
       </RouterLink>
 

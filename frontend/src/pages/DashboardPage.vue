@@ -4,7 +4,7 @@
     <header class="dashboard-header">
       <div>
         <h1>Google Trends Analyse</h1>
-        <p>Supplements in Deutschland – {{ periodLabel }}</p>
+        <p>Supplements in Deutschland</p>
       </div>
       <DateRangePicker
           :available-dates="allDatesRaw"
@@ -195,15 +195,6 @@ onMounted(async () => {
 function onRangeUpdate(range) {
   selectedRange.value = range
 }
-
-const periodLabel = computed(() => {
-  if (selectedRange.value) {
-    const [, sm, sd] = selectedRange.value.start.split('-')
-    const [, em, ed] = selectedRange.value.end.split('-')
-    return `${sd}.${sm} – ${ed}.${em}`
-  }
-  return 'Letzter Monat'
-})
 
 // Index-basierter Filter anhand des gewählten Datumsbereichs
 const filteredIndices = computed(() => {
