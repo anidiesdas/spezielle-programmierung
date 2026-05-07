@@ -34,8 +34,6 @@
       </tr>
       </tbody>
     </table>
-
-    <a class="show-more">Mehr anzeigen ›</a>
   </section>
 </template>
 

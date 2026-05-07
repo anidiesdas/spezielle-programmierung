@@ -1,11 +1,11 @@
 <template>
   <main class="dashboard-page">
+
     <header class="dashboard-header">
       <div>
         <h1>Google Trends Analyse</h1>
         <p>Supplements in Deutschland – {{ periodLabel }}</p>
       </div>
-
       <div class="period-select">
         <span>Zeitraum wählen</span>
         <select v-model="selectedPeriod">
@@ -17,24 +17,44 @@
       </div>
     </header>
 
-    <div v-if="loading" style="text-align:center; padding: 60px; color: #667085;">
-      Daten werden geladen...
-    </div>
+    <div v-if="loading" class="loading">Daten werden geladen...</div>
 
-    <section v-else class="dashboard-grid">
-      <aside class="left-column">
-        <TermSelector :terms="terms" @toggle-term="toggleTerm" />
-        <AiAnalysisCard
-            :analysis="aiAnalysis"
-            :best-average="bestAverageTerm"
-            :highest-peak="highestPeakTerm"
-            :rising-trend="risingTrendTerm"
-            :active-count="activeTerms.length"
-        />
-      </aside>
+    <template v-else>
 
-      <div class="content-column">
-        <section class="top-grid">
+      <!-- AI Overview -->
+      <section class="ai-card">
+        <h3>✨ AI-Analyse</h3>
+        <div class="ai-text-wrapper" :class="{ expanded: aiExpanded }">
+          <div v-if="aiAnalysis" class="ai-text" v-html="renderedAnalysis"></div>
+          <p v-else class="ai-placeholder">Analyse wird geladen...</p>
+          <div v-if="!aiExpanded" class="ai-fade"></div>
+        </div>
+        <button class="ai-toggle-btn" @click="aiExpanded = !aiExpanded">
+          {{ aiExpanded ? '▲ Weniger anzeigen' : '▼ Mehr anzeigen' }}
+        </button>
+      </section>
+
+      <!-- Term Selector -->
+      <section class="terms-row">
+        <button
+            v-for="term in terms"
+            :key="term.name"
+            class="term-button"
+            :class="{ active: term.active }"
+            :style="{ '--term-color': term.color, '--term-bg': term.bg }"
+            @click="toggleTerm(term.name)"
+        >
+          <span>{{ term.name }}</span>
+          <span class="term-dot">{{ term.active ? "✓" : "" }}</span>
+        </button>
+      </section>
+
+      <!-- Zeitstrahl + Metric Cards -->
+      <section class="timeline-metrics-row">
+        <div class="timeline-col">
+          <LineChart :terms="activeTerms" :labels="filteredLabels" />
+        </div>
+        <div class="metrics-col">
           <MetricCard
               label="Höchstes Interesse"
               :title="bestAverageTerm?.name"
@@ -59,44 +79,43 @@
               :color="risingTrendTerm?.color"
               icon-background="#ffe8f3"
           />
-        </section>
+        </div>
+      </section>
 
-        <section class="charts-grid">
-          <LineChart :terms="activeTerms" :labels="filteredLabels" />
-          <DonutChart :terms="activeTerms" />
-        </section>
+      <!-- Ranking + Donut -->
+      <section class="charts-row">
+        <RankingChart :terms="activeTerms" />
+        <DonutChart :terms="activeTerms" />
+      </section>
 
-        <section class="bottom-grid">
-          <RankingChart :terms="activeTerms" />
+      <!-- Queries -->
+      <section class="queries-row">
+        <QueryTable
+            title="Top Queries"
+            v-model:selected="selectedTopQueryTerm"
+            :terms="terms"
+            :growth="false"
+            :rows="queryRows[selectedTopQueryTerm] || []"
+        />
+        <QueryTable
+            title="Rising Queries"
+            v-model:selected="selectedRisingQueryTerm"
+            :terms="terms"
+            :growth="true"
+            :rows="risingRows[selectedRisingQueryTerm] || []"
+        />
+      </section>
 
-          <QueryTable
-              title="Top Queries"
-              v-model:selected="selectedTopQueryTerm"
-              :terms="terms"
-              :growth="false"
-              :rows="queryRows[selectedTopQueryTerm] || []"
-          />
-
-          <QueryTable
-              title="Rising Queries"
-              v-model:selected="selectedRisingQueryTerm"
-              :terms="terms"
-              :growth="true"
-              :rows="risingRows[selectedRisingQueryTerm] || []"
-          />
-        </section>
-      </div>
-    </section>
+    </template>
   </main>
 </template>
 
 <script setup>
 import { computed, ref, onMounted } from "vue"
+import { marked } from "marked"
 import { getMetrics, getTopQueries, getRisingQueries, getAiAnalysis } from "../services/api.js"
 
 import MetricCard from "../components/MetricCard.vue"
-import TermSelector from "@/components/TermSelector.vue"
-import AiAnalysisCard from "@/components/AiAnalysisCard.vue"
 import LineChart from "@/components/LineChart.vue"
 import DonutChart from "@/components/DonutChart.vue"
 import QueryTable from "@/components/QueryTable.vue"
@@ -119,10 +138,12 @@ const terms = ref([])
 const queryRows = ref({})
 const risingRows = ref({})
 const aiAnalysis = ref("")
+const aiExpanded = ref(false)
+
+const renderedAnalysis = computed(() => aiAnalysis.value ? marked(aiAnalysis.value) : "")
 
 onMounted(async () => {
   try {
-    // Metrics laden
     const metricsData = await getMetrics()
     terms.value = metricsData.terms.map(term => ({
       name: term.name,
@@ -135,7 +156,6 @@ onMounted(async () => {
       values: term.values
     }))
 
-    // Datum Labels generieren
     const count = terms.value[0]?.values?.length || 30
     const labels = []
     const today = new Date()
@@ -146,38 +166,31 @@ onMounted(async () => {
     }
     allDateLabels.value = labels
 
-    // Top Queries laden
     const topData = await getTopQueries()
     Object.keys(topData.data).forEach(termKey => {
       const termName = terms.value.find(t =>
           t.name.toLowerCase().replace(/ /g, '_') === termKey
       )?.name || termKey
       queryRows.value[termName] = topData.data[termKey].map((row, i) => ({
-        rank: i + 1,
-        query: row.query,
-        value: row.searchInterest
-      }))
+        rank: i + 1, query: row.query, value: row.searchInterest
+      })).slice(0, 20)
     })
 
-    // Rising Queries laden
     const risingData = await getRisingQueries()
     Object.keys(risingData.data).forEach(termKey => {
       const termName = terms.value.find(t =>
           t.name.toLowerCase().replace(/ /g, '_') === termKey
       )?.name || termKey
       risingRows.value[termName] = risingData.data[termKey].map((row, i) => ({
-        rank: i + 1,
-        query: row.query,
-        value: row.increasePercent
-      }))
+        rank: i + 1, query: row.query, value: row.increasePercent
+      })).slice(0, 20)
     })
 
-    // AI Analyse laden
     const analysisData = await getAiAnalysis()
     aiAnalysis.value = analysisData.analysis
 
   } catch (err) {
-    console.error('Fehler beim Laden der Daten:', err)
+    console.error('Fehler beim Laden:', err)
   } finally {
     loading.value = false
   }
@@ -196,7 +209,7 @@ const filteredTerms = computed(() => {
         const filteredValues = term.values.slice(-days)
         const average = filteredValues.reduce((sum, v) => sum + v, 0) / filteredValues.length
         const peak = Math.max(...filteredValues.map(Number))
-        return {...term, values: filteredValues, average: Number(average.toFixed(1)), peak}
+        return { ...term, values: filteredValues, average: Number(average.toFixed(1)), peak }
       })
 })
 
@@ -206,18 +219,9 @@ const filteredLabels = computed(() => {
 })
 
 const activeTerms = computed(() => filteredTerms.value)
-
-const bestAverageTerm = computed(() =>
-    [...activeTerms.value].sort((a, b) => b.average - a.average)[0]
-)
-
-const highestPeakTerm = computed(() =>
-    [...activeTerms.value].sort((a, b) => b.peak - a.peak)[0]
-)
-
-const risingTrendTerm = computed(() =>
-    activeTerms.value.find(t => t.trend === "increasing") || activeTerms.value[0]
-)
+const bestAverageTerm = computed(() => [...activeTerms.value].sort((a, b) => b.average - a.average)[0])
+const highestPeakTerm = computed(() => [...activeTerms.value].sort((a, b) => b.peak - a.peak)[0])
+const risingTrendTerm = computed(() => activeTerms.value.find(t => t.trend === "increasing") || activeTerms.value[0])
 
 function toggleTerm(termName) {
   const term = terms.value.find(item => item.name === termName)
