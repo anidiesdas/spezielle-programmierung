@@ -120,7 +120,7 @@ import DateRangePicker from "@/components/DateRangePicker.vue"
 const TERM_COLORS = {
   "Vitamin D": {color: "#1557ff", bg: "#eef4ff"},
   "Omega 3": {color: "#43a047", bg: "#edf8ee"},
-  "Kreatin": {color: "#dd629f", bg: "#ffe8f3"},
+  "Kreatin": {color: "#d55a96", bg: "#ffe8f3"},
   "Kollagen": {color: "#e10436", bg: "rgba(165,9,44,0.06)"},
   "Whey Protein": {color: "#8328a7", bg: "rgba(131,40,167,0.04)"},
 }

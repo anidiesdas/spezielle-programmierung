@@ -71,10 +71,10 @@
 </template>
 
 <script setup>
-import { ref, computed, watchEffect } from 'vue'
+import {ref, computed, watchEffect} from 'vue'
 
 const props = defineProps({
-  availableDates: { type: Array, required: true },
+  availableDates: {type: Array, required: true},
 })
 
 const emit = defineEmits(['update:range'])
@@ -111,7 +111,7 @@ const displayLabel = computed(() => {
 })
 
 function monthLabel(year, month) {
-  return new Date(year, month, 1).toLocaleDateString('de-DE', { month: 'long', year: 'numeric' })
+  return new Date(year, month, 1).toLocaleDateString('de-DE', {month: 'long', year: 'numeric'})
 }
 
 function formatDisplay(dateStr) {
@@ -126,7 +126,7 @@ function buildCells(year, month) {
   if (startDow < 0) startDow = 6
 
   for (let i = 0; i < startDow; i++) {
-    cells.push({ key: `e-${month}-${i}`, day: '', dateStr: null })
+    cells.push({key: `e-${month}-${i}`, day: '', dateStr: null})
   }
 
   const daysInMonth = new Date(year, month + 1, 0).getDate()
@@ -134,7 +134,7 @@ function buildCells(year, month) {
     const mm = String(month + 1).padStart(2, '0')
     const dd = String(d).padStart(2, '0')
     const dateStr = `${year}-${mm}-${dd}`
-    cells.push({ key: dateStr, day: d, dateStr })
+    cells.push({key: dateStr, day: d, dateStr})
   }
   return cells
 }
@@ -203,7 +203,7 @@ function nextMonth() {
 
 function apply() {
   if (!startDate.value || !endDate.value) return
-  emit('update:range', { start: startDate.value, end: endDate.value })
+  emit('update:range', {start: startDate.value, end: endDate.value})
   open.value = false
 }
 
@@ -236,7 +236,9 @@ function reset() {
   white-space: nowrap;
 }
 
-.drp-arrow { color: #98a2b3; }
+.drp-arrow {
+  color: #98a2b3;
+}
 
 .drp-overlay {
   position: fixed;
@@ -252,7 +254,7 @@ function reset() {
   background: #ffffff;
   border: 1px solid #e6ebf2;
   border-radius: 16px;
-  box-shadow: 0 8px 32px rgba(0,0,0,0.12);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
   padding: 20px;
   min-width: 560px;
 }
@@ -282,7 +284,9 @@ function reset() {
   border-radius: 6px;
 }
 
-.drp-cal-header button:hover { background: #f2f4f7; }
+.drp-cal-header button:hover {
+  background: #f2f4f7;
+}
 
 .drp-grid {
   display: grid;
@@ -307,7 +311,9 @@ function reset() {
   cursor: default;
 }
 
-.drp-empty { visibility: hidden; }
+.drp-empty {
+  visibility: hidden;
+}
 
 .drp-unavailable {
   color: #e0e0e0;
