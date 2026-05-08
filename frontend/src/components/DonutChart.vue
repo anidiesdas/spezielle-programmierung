@@ -1,7 +1,7 @@
 <template>
   <section class="chart-card donut-card">
     <div class="card-title">
-      <h3>Peaks im Zeitverlauf (Höchster Wert)</h3>
+      <h3>Peaks</h3>
     </div>
 
     <div class="donut-layout">
