@@ -26,7 +26,7 @@
 
 [//]: # (TODO readme beenden)
 [//]: # (TODO kubernetes aufgaben)
-
-[//]: # (TODO offene Fragen
-- responsive design??
-- )
+[//]: # (TODO cachfunktion)
+[//]: # (TODO profilseite mit anmeldefunktion, eigenem zeitplan)
+[//]: # (TODO chatfunktion)
+[//]: # (TODO pitch)
