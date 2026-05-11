@@ -4,7 +4,7 @@
     <header class="dashboard-header">
       <div>
         <h1>Google Trends Analyse</h1>
-        <p>Supplements in Deutschland</p>
+        <p>Erkunde die Trends in Deutschland!</p>
       </div>
       <DateRangePicker
           :available-dates="allDatesRaw"

@@ -18,6 +18,12 @@
         <span>💬</span>
         Chat
       </RouterLink>
+
+      <RouterLink to="/plan" class="nav-link">
+        <span>📋</span>
+        Mein Plan
+      </RouterLink>
+
     </nav>
 
   </aside>

@@ -487,3 +487,21 @@ td {
 }
 
 .growth { color: #16a34a; }
+
+.plan-text ul {
+    list-style: disc;
+    padding-left: 20px;
+}
+
+.plan-text li {
+    margin-bottom: 6px;
+}
+
+.plan-text strong {
+    color: #344054;
+}
+
+.plan-text p:has(> strong:first-child) {
+    padding: 8px 12px;
+    border-radius: 8px;
+}
