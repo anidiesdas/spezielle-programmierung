@@ -109,6 +109,52 @@ app.get('/health', (req, res) => {
     res.json({ status: 'ok' })
 })
 
+app.post('/chat', async (req, res) => {
+    try {
+        const client = new OpenAI({ apiKey: process.env.OPENAI_API_KEY })
+        const { question } = req.body
+
+        if (!question || !question.trim()) {
+            return res.status(400).json({
+                answer: 'Bitte stelle eine konkrete Frage.'
+            })
+        }
+
+        const aiResponse = await client.chat.completions.create({
+            model: 'gpt-4o-mini',
+            messages: [
+                {
+                    role: 'system',
+                    content: `
+                    Du bist der Chat-Assistent der App "Supplement Trends".
+                    Antworte auf Deutsch, kurz, verständlich und freundlich.
+
+                    Deine Grenzen:
+                    - Beantworte nur Fragen zu Supplements, Fitness-Trends, Google-Trends-Daten, Ernährung und Wochenplanung.
+                    - Gib keine medizinische Diagnose.
+                    - Empfiehl bei gesundheitlichen Beschwerden einen Arzt oder eine Ärztin.
+                    - Wenn eine Frage nicht zum Thema passt, sage höflich, dass du dazu keine passende Antwort geben kannst.
+                    `
+                },
+                {
+                    role: 'user',
+                    content: question
+                }
+            ]
+        })
+
+        res.json({
+            answer: aiResponse.choices[0].message.content
+        })
+
+    } catch (error) {
+        res.status(500).json({
+            answer: 'Ich konnte deine Frage gerade nicht beantworten. Bitte versuche es später erneut.',
+            details: error.message
+        })
+    }
+})
+
 app.listen(8001, () => console.log('AI Service läuft auf Port 8001'))
 
 // TODO chat bot api
