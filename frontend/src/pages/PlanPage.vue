@@ -112,7 +112,7 @@ import { ref, computed } from 'vue'
 import { marked } from 'marked'
 import { getMetrics } from '../services/api.js'
 
-const AI_SERVICE_URL = 'http://localhost:8001'
+const AI_SERVICE_URL = 'http://ai.localhost'
 
 const form = ref({
   age: '',

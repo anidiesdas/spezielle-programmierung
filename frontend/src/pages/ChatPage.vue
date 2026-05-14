@@ -55,7 +55,7 @@ const sendMessage = async () => {
   message.value = ''
 
   try {
-    const response = await axios.post('http://localhost:8001/chat', {
+    const response = await axios.post('http://ai.localhost/chat', {
       question: userQuestion
     })
 

@@ -1,7 +1,7 @@
 import axios from "axios";
 
-const DATA_SERVICE_URL = "http://localhost:3001";
-const AI_SERVICE_URL = "http://localhost:8001";
+const DATA_SERVICE_URL = 'http://data.localhost'
+const AI_SERVICE_URL = 'http://ai.localhost'
 
 export async function getMetrics(days) {
     const response = await axios.get(`${DATA_SERVICE_URL}/metrics`, {
