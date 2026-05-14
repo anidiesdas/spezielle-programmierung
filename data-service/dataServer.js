@@ -64,6 +64,14 @@ app.get('/health', (req, res) => {
     res.json({ status: 'ok' })
 })
 
+app.get('/live', (req, res) => {
+    res.json({ status: 'alive' })
+})
+
+app.get('/ready', (req, res) => {
+    res.json({ status: 'ready' })
+})
+
 // /top-queries
 app.get('/top-queries', (req, res) => {
     try {

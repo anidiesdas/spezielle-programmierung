@@ -15,7 +15,7 @@ spec:
       containers:
         - name: ai-service
           image: ai-service
-          imagePullPolicy: IfNotPresent
+          imagePullPolicy: Always
           ports:
             - containerPort: 8001
           env:
@@ -26,11 +26,11 @@ spec:
                   key: OPENAI_API_KEY
           livenessProbe:
             httpGet:
-              path: /health
+              path: /live
               port: 8001
             initialDelaySeconds: 10
           readinessProbe:
             httpGet:
-              path: /health
+              path: /ready
               port: 8001
             initialDelaySeconds: 5
