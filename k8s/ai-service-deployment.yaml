@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: ai-service
-          image: ai-service
+          image: spezielle-programmierung-ai-service:latest
           imagePullPolicy: Always
           ports:
             - containerPort: 8001
@@ -24,6 +24,16 @@ spec:
                 secretKeyRef:
                   name: ai-api-secret
                   key: OPENAI_API_KEY
+            - name: DATA_SERVICE_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: app-config
+                  key: DATA_SERVICE_URL
+            - name: OPENAI_MODEL
+              valueFrom:
+                configMapKeyRef:
+                  name: app-config
+                  key: OPENAI_MODEL
           livenessProbe:
             httpGet:
               path: /live

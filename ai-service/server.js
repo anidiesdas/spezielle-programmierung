@@ -6,7 +6,8 @@ const app = express()
 app.use(cors())
 app.use(express.json())
 
-const DATA_SERVICE_URL = 'http://data-service:3001/metrics'
+const DATA_SERVICE_URL = process.env.DATA_SERVICE_URL || 'http://data-service:3001/metrics'
+const MODEL = process.env.OPENAI_MODEL || 'gpt-4o-mini'
 
 app.get('/analysis', async (req, res) => {
     try {

@@ -3,7 +3,7 @@ kind: Deployment
 metadata:
   name: data-service
 spec:
-  replicas: 1
+  replicas: 3
   selector:
     matchLabels:
       app: data-service
@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: data-service
-          image: data-service
+          image: spezielle-programmierung-data-service:latest
           imagePullPolicy: Always
           ports:
             - containerPort: 3001
