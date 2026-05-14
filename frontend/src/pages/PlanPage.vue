@@ -2,7 +2,7 @@
   <main class="plan-page">
     <header class="plan-header">
       <h1>Erstelle deinen persönlichen Supplement-Plan</h1>
-      <p>Gib deine Daten ein und erhalte einen auf dich zugeschnittenen Tagesplan.</p>
+      <p>Gib deine Daten ein und erhalte einen auf dich zugeschnittenen Wochenplan.</p>
     </header>
 
     <section class="plan-form-card">
@@ -16,7 +16,7 @@
         <div class="form-group">
           <label>Geschlecht</label>
           <select v-model="form.gender">
-            <option value="">Bitte wählen</option>
+            <option value="" disabled>Bitte wählen</option>
             <option value="männlich">Männlich</option>
             <option value="weiblich">Weiblich</option>
             <option value="divers">Divers</option>
@@ -34,14 +34,14 @@
         </div>
 
         <div class="form-group full-width">
-          <label>Ziel</label>
+          <label>Ziele <span class="optional">(mehrere möglich)</span></label>
           <div class="goal-buttons">
             <button
                 v-for="goal in goals"
                 :key="goal.value"
                 class="goal-btn"
-                :class="{ active: form.goal === goal.value }"
-                @click="form.goal = goal.value"
+                :class="{ active: form.goals.includes(goal.value) }"
+                @click="toggleGoal(goal.value)"
             >
               {{ goal.icon }} {{ goal.label }}
             </button>
@@ -83,7 +83,7 @@
         </div>
 
         <div class="form-group full-width">
-          <label>Gesundheitliche Hinweise oder Besonderheiten <span class="optional">(optional)</span></label>
+          <label>Gesundheitliche Hinweise <span class="optional">(optional)</span></label>
           <textarea v-model="form.notes" placeholder="z.B. Laktoseintoleranz, Vegetarier, Allergien..." rows="3"></textarea>
         </div>
 
@@ -91,7 +91,7 @@
 
       <button class="generate-btn" @click="generatePlan" :disabled="loading || !isFormValid">
         <span v-if="loading">⏳ Plan wird erstellt...</span>
-        <span v-else>Plan erstellen</span>
+        <span v-else>✨ Plan erstellen</span>
       </button>
     </section>
 
@@ -119,7 +119,7 @@ const form = ref({
   gender: '',
   weight: '',
   height: '',
-  goal: '',
+  goals: [],
   activity: '',
   currentSupplements: [],
   additionalSupplements: '',
@@ -149,10 +149,16 @@ const loading = ref(false)
 const plan = ref('')
 
 const isFormValid = computed(() =>
-    form.value.age && form.value.gender && form.value.weight && form.value.goal
+    form.value.age && form.value.gender && form.value.weight && form.value.goals.length > 0
 )
 
 const renderedPlan = computed(() => plan.value ? marked(plan.value) : '')
+
+function toggleGoal(value) {
+  const idx = form.value.goals.indexOf(value)
+  if (idx === -1) form.value.goals.push(value)
+  else form.value.goals.splice(idx, 1)
+}
 
 async function generatePlan() {
   loading.value = true
@@ -369,5 +375,31 @@ textarea { resize: vertical; }
   font-size: 14px;
   line-height: 1.7;
   color: #344054;
+}
+
+.plan-text ul {
+  list-style: disc;
+  padding-left: 20px;
+}
+
+.plan-text li {
+  margin-bottom: 6px;
+}
+
+.plan-text strong {
+  color: #111827;
+}
+
+.plan-text h2 {
+  font-size: 16px;
+  font-weight: 800;
+  margin: 20px 0 10px;
+  color: #111827;
+}
+
+.plan-text hr {
+  border: none;
+  border-top: 1px solid #e6ebf2;
+  margin: 20px 0;
 }
 </style>
