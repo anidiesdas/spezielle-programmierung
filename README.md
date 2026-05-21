@@ -48,3 +48,11 @@ Eine technische Herausforderung war die Übergabe des OpenAI API Keys in Kuberne
 ## 7. Zukunftsvision
 
 Das System könnte durch Echtzeit-Daten aus der Google Trends API erweitert werden, sobald eine stabile Schnittstelle verfügbar ist. Zusätzliche Supplement-Kategorien wären denkbar. Die AI-Komponente könnte mit wissenschaftlichen Studien angereichert werden, um fundiertere Empfehlungen zu geben. Eine Nutzerverwaltung mit Profil-Speicherung würde die Personalisierung langfristig verbessern.
+
+---
+
+## PITCH
+
+Der Pitch wurde auf Google Drive hochgeladen, da das Video die erlaubte Dateigröße von Github überschreitet. Sie können über den folgenden Link auf das Video zugreifen: https://drive.google.com/file/d/1IbviQzZMOVqp5vZydDM03Mf_512bH4LL/view?usp=sharing
+
+Viel Spaß!
